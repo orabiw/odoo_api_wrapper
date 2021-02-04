@@ -37,7 +37,7 @@ def call(model: str, operation: Operations, args: tuple,
     models = ServerProxy('{}/xmlrpc/2/object'.format(config.ODOO_BASE_URL))
 
     if not isinstance(operation, Operations):
-        raise Exception('Invalid operation')
+        raise APIError('Invalid operation')
 
     try:
         return models.execute_kw(config.ODOO_DB_NAME, uid, password, model,
