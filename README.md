@@ -1,4 +1,4 @@
-# Odoo API Wrapperg
+# Odoo API Wrapper
 
 A wrapper for [Odoo](https://www.odoo.com/)'s API.
 
