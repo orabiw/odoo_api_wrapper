@@ -122,9 +122,9 @@ def fields_get(model: str, args: tuple, kwargs: dict = None) -> list:
 
 def unlink(model: str, args: tuple, kwargs: dict = None) -> list:
     """
-    call the api w/ model and a "FIELDS_GET" operation
+    call the api w/ model and a "UNLINK" operation
     :param model: str
     :param args: a list of parameters passed by position
     :param kwargs: a dict of parameters to pass by keyword (optional)
     """
-    return call(model, Operations.FIELDS_GET, args, kwargs)
+    return call(model, Operations.UNLINK, args, kwargs)
