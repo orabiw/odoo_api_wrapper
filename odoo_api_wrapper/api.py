@@ -7,9 +7,6 @@ from xmlrpc.client import ServerProxy, Fault
 import config
 
 from .errors import APIError
-from .logger import get_logger
-
-logger = get_logger(__name__)  # pylint:disable=invalid-name
 
 
 class Operations(Enum):
