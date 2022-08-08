@@ -33,3 +33,42 @@ def mock_server():
     """patch `xmlrpc.client`"""
     with mock.patch("odoo_api_wrapper.api.xmlrpc.client"):
         yield
+
+
+@pytest.fixture
+def model(random_string):
+    """model fixture"""
+    return random_string()
+
+
+@pytest.fixture
+def args(random_string):
+    """args for methods fixture"""
+    operators = [
+        "=",
+        "!=",
+        ">",
+        ">=",
+        "<",
+        "<=",
+        "=?",
+        "=like",
+        "like",
+        "not like",
+        "ilike",
+        "not ilike",
+        "=ilike",
+        "in",
+        "not in",
+        "child_of",
+        "parent_of",
+    ]
+
+    operator = random.choice(operators)
+    return [[random_string(), operator, random_string()]]
+
+
+@pytest.fixture
+def kwargs(random_string):
+    """args for methods fixture"""
+    return {random_string(): random_string()}

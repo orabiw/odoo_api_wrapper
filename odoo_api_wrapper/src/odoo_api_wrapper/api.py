@@ -20,7 +20,7 @@ api.search("somemodel", "something")
 import enum
 import socket
 import xmlrpc.client
-from typing import Any
+from typing import Any, Dict, Optional
 
 
 class Operations(enum.Enum):
@@ -39,9 +39,9 @@ class Operations(enum.Enum):
 class APIError(Exception):
     """API Error Base Class"""
 
-    def __init__(self, description, *args, **kwargs):
+    def __init__(self, description: str, *args: Any, **kwargs: Any):
         super().__init__(*args, **kwargs)
-        self.description = str(description)
+        self.description = description
 
     def __str__(self) -> str:
         return self.description
@@ -58,7 +58,13 @@ class Api:
 
         self.server = xmlrpc.client.ServerProxy(f"{self.base_url}/xmlrpc/2/object")
 
-    def call(self, model: str, operation: Operations, *args: Any, **kwargs: Any) -> Any:
+    def call(
+        self,
+        model: str,
+        operation: Operations,
+        args: Any,
+        kwargs: Dict[str, Any] = None,
+    ) -> Any:
         """
         Call the api w/ model and an operation
 
@@ -85,76 +91,78 @@ class Api:
         except xmlrpc.client.Fault as error:
             raise APIError(error.faultString) from error
         except socket.gaierror as error:
-            raise APIError(error) from error
+            raise APIError(str(error)) from error
 
-    def search_read(self, model: str, *args: Any, **kwargs: Any) -> list:
+    def search_read(self, model: str, args: Any, kwargs: Any) -> list:
         """
         call the api w/ model and a "SEARCH_READ" operation
         :param model: str
         :param args: a list of parameters passed by position
         :param kwargs: a dict of parameters to pass by keyword (optional)
         """
-        return self.call(model, Operations.SEARCH_READ, *args, **kwargs)
+        return self.call(model, Operations.SEARCH_READ, args, kwargs)
 
-    def read(self, model: str, *args: Any, **kwargs: Any) -> list:
+    def read(self, model: str, args: Any, kwargs: Any) -> list:
         """
         call the api w/ model and a "READ" operation
         :param model: str
         :param args: a list of parameters passed by position
         :param kwargs: a dict of parameters to pass by keyword (optional)
         """
-        return self.call(model, Operations.READ, *args, **kwargs)
+        return self.call(model, Operations.READ, args, kwargs)
 
-    def write(self, model: str, *args: Any, **kwargs: Any) -> list:
+    def write(self, model: str, args: Any, kwargs: Any) -> list:
         """
         call the api w/ model and a "WRITE" operation
         :param model: str
         :param args: a list of parameters passed by position
         :param kwargs: a dict of parameters to pass by keyword (optional)
         """
-        return self.call(model, Operations.WRITE, *args, **kwargs)
+        return self.call(model, Operations.WRITE, args, kwargs)
 
-    def create(self, model: str, *args: Any, **kwargs: Any) -> list:
+    def create(self, model: str, args: Any, kwargs: Any) -> list:
         """
         call the api w/ model and a "CREATE" operation
         :param model: str
         :param args: a list of parameters passed by position
         :param kwargs: a dict of parameters to pass by keyword (optional)
         """
-        return self.call(model, Operations.CREATE, *args, **kwargs)
+        return self.call(model, Operations.CREATE, args, kwargs)
 
-    def search(self, model: str, *args: Any, **kwargs: Any) -> list:
+    def search(
+        self, model: str, args: Any, kwargs: Optional[Dict[str, Any]] = None
+    ) -> list:
         """
         call the api w/ model and a "SEARCH" operation
         :param model: str
         :param args: a list of parameters passed by position
         :param kwargs: a dict of parameters to pass by keyword (optional)
         """
-        return self.call(model, Operations.SEARCH, *args, **kwargs)
+        return self.call(model, Operations.SEARCH, args, kwargs)
 
-    def search_count(self, model: str, *args: Any) -> int:
+    def search_count(self, model: str, args: Any) -> int:
         """Returns the number of records in the current model matching the provided
         domain.
 
         :param model: str
         :param args: search domain
         """
-        return self.call(model, Operations.SEARCH_COUNT, *args)
+        return self.call(model, Operations.SEARCH_COUNT, args)
 
-    def fields_get(self, model: str, *args: Any, **kwargs: Any) -> list:
+    def fields_get(self, model: str, args: Any, kwargs: Any) -> list:
         """
         call the api w/ model and a "FIELDS_GET" operation
         :param model: str
         :param args: a list of parameters passed by position
         :param kwargs: a dict of parameters to pass by keyword (optional)
         """
-        return self.call(model, Operations.FIELDS_GET, *args, **kwargs)
+        return self.call(model, Operations.FIELDS_GET, args, kwargs)
 
-    def unlink(self, model: str, *args: Any, **kwargs: Any) -> list:
+    def unlink(self, model: str, args: Any, kwargs: Any) -> list:
         """
         call the api w/ model and a "UNLINK" operation
         :param model: str
         :param args: a list of parameters passed by position
         :param kwargs: a dict of parameters to pass by keyword (optional)
         """
-        return self.call(model, Operations.UNLINK, *args, **kwargs)
+        return self.call(model, Operations.UNLINK, args, kwargs)
