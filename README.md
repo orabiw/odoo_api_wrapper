@@ -8,8 +8,9 @@ You can check out Odoo's API documentation on
 
 ## Usage
 
-```
-from odoo_api_wrapper.api import read
+```python
+import odoo_api_wrapper
 
-read('res.partner', [1211], {'fields': ['name', 'country_id', 'comment']})
+api = odoo_api_wrapper.Api("http://localhost:8069", "db", "1001", "password")
+api.search('res.partner', [[['is_company', '=', True]]])
 ```

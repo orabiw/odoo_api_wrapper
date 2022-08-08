@@ -7,7 +7,7 @@ operations.
 import odoo_api_wrapper
 
 api = odoo_api_wrapper.Api("http://localhost:8069", "db", "1001", "password")
-api.search("somemodel", "something")
+api.search('res.partner', [[['is_company', '=', True]]])
 ```
 
 """
