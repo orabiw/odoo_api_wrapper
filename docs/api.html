@@ -33,7 +33,7 @@ the operations used for <code><a title="odoo_api_wrapper.api.Api.call" href="#od
 api = odoo_api_wrapper.Api(&quot;http://localhost:8069&quot;, &quot;db&quot;, &quot;1001&quot;, &quot;password&quot;)
 
 # search
-api.search(&quot;somemodel&quot;, &quot;something&quot;)
+api.search('res.partner', [[['is_company', '=', True]]])
 </code></pre>
 <details class="source">
 <summary>
@@ -54,7 +54,7 @@ import odoo_api_wrapper
 api = odoo_api_wrapper.Api(&#34;http://localhost:8069&#34;, &#34;db&#34;, &#34;1001&#34;, &#34;password&#34;)
 
 # search
-api.search(&#34;somemodel&#34;, &#34;something&#34;)
+api.search(&#39;res.partner&#39;, [[[&#39;is_company&#39;, &#39;=&#39;, True]]])
 ```
 
 &#34;&#34;&#34;
