@@ -57,12 +57,11 @@ api = odoo_api_wrapper.Api(&#34;http://localhost:8069&#34;, &#34;db&#34;, &#34;1
 api.search(&#34;somemodel&#34;, &#34;something&#34;)
 ```
 
-
 &#34;&#34;&#34;
 import enum
 import socket
 import xmlrpc.client
-from typing import Any
+from typing import Any, Dict, Optional
 
 
 class Operations(enum.Enum):
@@ -81,9 +80,12 @@ class Operations(enum.Enum):
 class APIError(Exception):
     &#34;&#34;&#34;API Error Base Class&#34;&#34;&#34;
 
-    def __init__(self, description, *args, **kwargs):
+    def __init__(self, description: str, *args: Any, **kwargs: Any):
         super().__init__(*args, **kwargs)
         self.description = description
+
+    def __str__(self) -&gt; str:
+        return self.description
 
 
 class Api:
@@ -97,7 +99,13 @@ class Api:
 
         self.server = xmlrpc.client.ServerProxy(f&#34;{self.base_url}/xmlrpc/2/object&#34;)
 
-    def call(self, model: str, operation: Operations, *args: Any, **kwargs: Any) -&gt; Any:
+    def call(
+        self,
+        model: str,
+        operation: Operations,
+        args: Any,
+        kwargs: Dict[str, Any] = None,
+    ) -&gt; Any:
         &#34;&#34;&#34;
         Call the api w/ model and an operation
 
@@ -124,79 +132,81 @@ class Api:
         except xmlrpc.client.Fault as error:
             raise APIError(error.faultString) from error
         except socket.gaierror as error:
-            raise APIError(error) from error
+            raise APIError(str(error)) from error
 
-    def search_read(self, model: str, *args: Any, **kwargs: Any) -&gt; list:
+    def search_read(self, model: str, args: Any, kwargs: Any) -&gt; list:
         &#34;&#34;&#34;
         call the api w/ model and a &#34;SEARCH_READ&#34; operation
         :param model: str
         :param args: a list of parameters passed by position
         :param kwargs: a dict of parameters to pass by keyword (optional)
         &#34;&#34;&#34;
-        return self.call(model, Operations.SEARCH_READ, *args, **kwargs)
+        return self.call(model, Operations.SEARCH_READ, args, kwargs)
 
-    def read(self, model: str, *args: Any, **kwargs: Any) -&gt; list:
+    def read(self, model: str, args: Any, kwargs: Any) -&gt; list:
         &#34;&#34;&#34;
         call the api w/ model and a &#34;READ&#34; operation
         :param model: str
         :param args: a list of parameters passed by position
         :param kwargs: a dict of parameters to pass by keyword (optional)
         &#34;&#34;&#34;
-        return self.call(model, Operations.READ, *args, **kwargs)
+        return self.call(model, Operations.READ, args, kwargs)
 
-    def write(self, model: str, *args: Any, **kwargs: Any) -&gt; list:
+    def write(self, model: str, args: Any, kwargs: Any) -&gt; list:
         &#34;&#34;&#34;
         call the api w/ model and a &#34;WRITE&#34; operation
         :param model: str
         :param args: a list of parameters passed by position
         :param kwargs: a dict of parameters to pass by keyword (optional)
         &#34;&#34;&#34;
-        return self.call(model, Operations.WRITE, *args, **kwargs)
+        return self.call(model, Operations.WRITE, args, kwargs)
 
-    def create(self, model: str, *args: Any, **kwargs: Any) -&gt; list:
+    def create(self, model: str, args: Any, kwargs: Any) -&gt; list:
         &#34;&#34;&#34;
         call the api w/ model and a &#34;CREATE&#34; operation
         :param model: str
         :param args: a list of parameters passed by position
         :param kwargs: a dict of parameters to pass by keyword (optional)
         &#34;&#34;&#34;
-        return self.call(model, Operations.CREATE, *args, **kwargs)
+        return self.call(model, Operations.CREATE, args, kwargs)
 
-    def search(self, model: str, *args: Any, **kwargs: Any) -&gt; list:
+    def search(
+        self, model: str, args: Any, kwargs: Optional[Dict[str, Any]] = None
+    ) -&gt; list:
         &#34;&#34;&#34;
         call the api w/ model and a &#34;SEARCH&#34; operation
         :param model: str
         :param args: a list of parameters passed by position
         :param kwargs: a dict of parameters to pass by keyword (optional)
         &#34;&#34;&#34;
-        return self.call(model, Operations.SEARCH, *args, **kwargs)
+        return self.call(model, Operations.SEARCH, args, kwargs)
 
-    def search_count(self, model: str, *args: Any, **kwargs: Any) -&gt; list:
-        &#34;&#34;&#34;
-        call the api w/ model and a &#34;SEARCH_COUNT&#34; operation
+    def search_count(self, model: str, args: Any) -&gt; int:
+        &#34;&#34;&#34;Returns the number of records in the current model matching the provided
+        domain.
+
         :param model: str
-        :param args: a list of parameters passed by position
-        :param kwargs: a dict of parameters to pass by keyword (optional)
+        :param args: search domain
         &#34;&#34;&#34;
-        return self.call(model, Operations.SEARCH_COUNT, *args, **kwargs)
+        return self.call(model, Operations.SEARCH_COUNT, args)
 
-    def fields_get(self, model: str, *args: Any, **kwargs: Any) -&gt; list:
+    def fields_get(self, model: str, args: Any, kwargs: Any) -&gt; list:
         &#34;&#34;&#34;
         call the api w/ model and a &#34;FIELDS_GET&#34; operation
         :param model: str
         :param args: a list of parameters passed by position
         :param kwargs: a dict of parameters to pass by keyword (optional)
         &#34;&#34;&#34;
-        return self.call(model, Operations.FIELDS_GET, *args, **kwargs)
+        return self.call(model, Operations.FIELDS_GET, args, kwargs)
 
-    def unlink(self, model: str, *args: Any, **kwargs: Any) -&gt; list:
+    def unlink(self, model: str, args: Any, kwargs: Any) -&gt; list:
         &#34;&#34;&#34;
         call the api w/ model and a &#34;UNLINK&#34; operation
         :param model: str
         :param args: a list of parameters passed by position
         :param kwargs: a dict of parameters to pass by keyword (optional)
         &#34;&#34;&#34;
-        return self.call(model, Operations.UNLINK, *args, **kwargs)</code></pre>
+        return self.call(model, Operations.UNLINK, args, kwargs)</code></pre>
 </details>
 </section>
 <section>
@@ -210,7 +220,7 @@ class Api:
 <dl>
 <dt id="odoo_api_wrapper.api.APIError"><code class="flex name class">
 <span>class <span class="ident">APIError</span></span>
-<span>(</span><span>description, *args, **kwargs)</span>
+<span>(</span><span>description: str, *args: Any, **kwargs: Any)</span>
 </code></dt>
 <dd>
 <div class="desc"><p>API Error Base Class</p></div>
@@ -221,9 +231,12 @@ class Api:
 <pre><code class="python">class APIError(Exception):
     &#34;&#34;&#34;API Error Base Class&#34;&#34;&#34;
 
-    def __init__(self, description, *args, **kwargs):
+    def __init__(self, description: str, *args: Any, **kwargs: Any):
         super().__init__(*args, **kwargs)
-        self.description = description</code></pre>
+        self.description = description
+
+    def __str__(self) -&gt; str:
+        return self.description</code></pre>
 </details>
 <h3>Ancestors</h3>
 <ul class="hlist">
@@ -252,7 +265,13 @@ class Api:
 
         self.server = xmlrpc.client.ServerProxy(f&#34;{self.base_url}/xmlrpc/2/object&#34;)
 
-    def call(self, model: str, operation: Operations, *args: Any, **kwargs: Any) -&gt; Any:
+    def call(
+        self,
+        model: str,
+        operation: Operations,
+        args: Any,
+        kwargs: Dict[str, Any] = None,
+    ) -&gt; Any:
         &#34;&#34;&#34;
         Call the api w/ model and an operation
 
@@ -279,84 +298,86 @@ class Api:
         except xmlrpc.client.Fault as error:
             raise APIError(error.faultString) from error
         except socket.gaierror as error:
-            raise APIError(error) from error
+            raise APIError(str(error)) from error
 
-    def search_read(self, model: str, *args: Any, **kwargs: Any) -&gt; list:
+    def search_read(self, model: str, args: Any, kwargs: Any) -&gt; list:
         &#34;&#34;&#34;
         call the api w/ model and a &#34;SEARCH_READ&#34; operation
         :param model: str
         :param args: a list of parameters passed by position
         :param kwargs: a dict of parameters to pass by keyword (optional)
         &#34;&#34;&#34;
-        return self.call(model, Operations.SEARCH_READ, *args, **kwargs)
+        return self.call(model, Operations.SEARCH_READ, args, kwargs)
 
-    def read(self, model: str, *args: Any, **kwargs: Any) -&gt; list:
+    def read(self, model: str, args: Any, kwargs: Any) -&gt; list:
         &#34;&#34;&#34;
         call the api w/ model and a &#34;READ&#34; operation
         :param model: str
         :param args: a list of parameters passed by position
         :param kwargs: a dict of parameters to pass by keyword (optional)
         &#34;&#34;&#34;
-        return self.call(model, Operations.READ, *args, **kwargs)
+        return self.call(model, Operations.READ, args, kwargs)
 
-    def write(self, model: str, *args: Any, **kwargs: Any) -&gt; list:
+    def write(self, model: str, args: Any, kwargs: Any) -&gt; list:
         &#34;&#34;&#34;
         call the api w/ model and a &#34;WRITE&#34; operation
         :param model: str
         :param args: a list of parameters passed by position
         :param kwargs: a dict of parameters to pass by keyword (optional)
         &#34;&#34;&#34;
-        return self.call(model, Operations.WRITE, *args, **kwargs)
+        return self.call(model, Operations.WRITE, args, kwargs)
 
-    def create(self, model: str, *args: Any, **kwargs: Any) -&gt; list:
+    def create(self, model: str, args: Any, kwargs: Any) -&gt; list:
         &#34;&#34;&#34;
         call the api w/ model and a &#34;CREATE&#34; operation
         :param model: str
         :param args: a list of parameters passed by position
         :param kwargs: a dict of parameters to pass by keyword (optional)
         &#34;&#34;&#34;
-        return self.call(model, Operations.CREATE, *args, **kwargs)
+        return self.call(model, Operations.CREATE, args, kwargs)
 
-    def search(self, model: str, *args: Any, **kwargs: Any) -&gt; list:
+    def search(
+        self, model: str, args: Any, kwargs: Optional[Dict[str, Any]] = None
+    ) -&gt; list:
         &#34;&#34;&#34;
         call the api w/ model and a &#34;SEARCH&#34; operation
         :param model: str
         :param args: a list of parameters passed by position
         :param kwargs: a dict of parameters to pass by keyword (optional)
         &#34;&#34;&#34;
-        return self.call(model, Operations.SEARCH, *args, **kwargs)
+        return self.call(model, Operations.SEARCH, args, kwargs)
 
-    def search_count(self, model: str, *args: Any, **kwargs: Any) -&gt; list:
-        &#34;&#34;&#34;
-        call the api w/ model and a &#34;SEARCH_COUNT&#34; operation
+    def search_count(self, model: str, args: Any) -&gt; int:
+        &#34;&#34;&#34;Returns the number of records in the current model matching the provided
+        domain.
+
         :param model: str
-        :param args: a list of parameters passed by position
-        :param kwargs: a dict of parameters to pass by keyword (optional)
+        :param args: search domain
         &#34;&#34;&#34;
-        return self.call(model, Operations.SEARCH_COUNT, *args, **kwargs)
+        return self.call(model, Operations.SEARCH_COUNT, args)
 
-    def fields_get(self, model: str, *args: Any, **kwargs: Any) -&gt; list:
+    def fields_get(self, model: str, args: Any, kwargs: Any) -&gt; list:
         &#34;&#34;&#34;
         call the api w/ model and a &#34;FIELDS_GET&#34; operation
         :param model: str
         :param args: a list of parameters passed by position
         :param kwargs: a dict of parameters to pass by keyword (optional)
         &#34;&#34;&#34;
-        return self.call(model, Operations.FIELDS_GET, *args, **kwargs)
+        return self.call(model, Operations.FIELDS_GET, args, kwargs)
 
-    def unlink(self, model: str, *args: Any, **kwargs: Any) -&gt; list:
+    def unlink(self, model: str, args: Any, kwargs: Any) -&gt; list:
         &#34;&#34;&#34;
         call the api w/ model and a &#34;UNLINK&#34; operation
         :param model: str
         :param args: a list of parameters passed by position
         :param kwargs: a dict of parameters to pass by keyword (optional)
         &#34;&#34;&#34;
-        return self.call(model, Operations.UNLINK, *args, **kwargs)</code></pre>
+        return self.call(model, Operations.UNLINK, args, kwargs)</code></pre>
 </details>
 <h3>Methods</h3>
 <dl>
 <dt id="odoo_api_wrapper.api.Api.call"><code class="name flex">
-<span>def <span class="ident">call</span></span>(<span>self, model: str, operation: <a title="odoo_api_wrapper.api.Operations" href="#odoo_api_wrapper.api.Operations">Operations</a>, *args: Any, **kwargs: Any) ‑> Any</span>
+<span>def <span class="ident">call</span></span>(<span>self, model: str, operation: <a title="odoo_api_wrapper.api.Operations" href="#odoo_api_wrapper.api.Operations">Operations</a>, args: Any, kwargs: Dict[str, Any] = None) ‑> Any</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Call the api w/ model and an operation</p>
@@ -368,7 +389,13 @@ class Api:
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def call(self, model: str, operation: Operations, *args: Any, **kwargs: Any) -&gt; Any:
+<pre><code class="python">def call(
+    self,
+    model: str,
+    operation: Operations,
+    args: Any,
+    kwargs: Dict[str, Any] = None,
+) -&gt; Any:
     &#34;&#34;&#34;
     Call the api w/ model and an operation
 
@@ -395,11 +422,11 @@ class Api:
     except xmlrpc.client.Fault as error:
         raise APIError(error.faultString) from error
     except socket.gaierror as error:
-        raise APIError(error) from error</code></pre>
+        raise APIError(str(error)) from error</code></pre>
 </details>
 </dd>
 <dt id="odoo_api_wrapper.api.Api.create"><code class="name flex">
-<span>def <span class="ident">create</span></span>(<span>self, model: str, *args: Any, **kwargs: Any) ‑> list</span>
+<span>def <span class="ident">create</span></span>(<span>self, model: str, args: Any, kwargs: Any) ‑> list</span>
 </code></dt>
 <dd>
 <div class="desc"><p>call the api w/ model and a "CREATE" operation
@@ -410,18 +437,18 @@ class Api:
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def create(self, model: str, *args: Any, **kwargs: Any) -&gt; list:
+<pre><code class="python">def create(self, model: str, args: Any, kwargs: Any) -&gt; list:
     &#34;&#34;&#34;
     call the api w/ model and a &#34;CREATE&#34; operation
     :param model: str
     :param args: a list of parameters passed by position
     :param kwargs: a dict of parameters to pass by keyword (optional)
     &#34;&#34;&#34;
-    return self.call(model, Operations.CREATE, *args, **kwargs)</code></pre>
+    return self.call(model, Operations.CREATE, args, kwargs)</code></pre>
 </details>
 </dd>
 <dt id="odoo_api_wrapper.api.Api.fields_get"><code class="name flex">
-<span>def <span class="ident">fields_get</span></span>(<span>self, model: str, *args: Any, **kwargs: Any) ‑> list</span>
+<span>def <span class="ident">fields_get</span></span>(<span>self, model: str, args: Any, kwargs: Any) ‑> list</span>
 </code></dt>
 <dd>
 <div class="desc"><p>call the api w/ model and a "FIELDS_GET" operation
@@ -432,18 +459,18 @@ class Api:
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def fields_get(self, model: str, *args: Any, **kwargs: Any) -&gt; list:
+<pre><code class="python">def fields_get(self, model: str, args: Any, kwargs: Any) -&gt; list:
     &#34;&#34;&#34;
     call the api w/ model and a &#34;FIELDS_GET&#34; operation
     :param model: str
     :param args: a list of parameters passed by position
     :param kwargs: a dict of parameters to pass by keyword (optional)
     &#34;&#34;&#34;
-    return self.call(model, Operations.FIELDS_GET, *args, **kwargs)</code></pre>
+    return self.call(model, Operations.FIELDS_GET, args, kwargs)</code></pre>
 </details>
 </dd>
 <dt id="odoo_api_wrapper.api.Api.read"><code class="name flex">
-<span>def <span class="ident">read</span></span>(<span>self, model: str, *args: Any, **kwargs: Any) ‑> list</span>
+<span>def <span class="ident">read</span></span>(<span>self, model: str, args: Any, kwargs: Any) ‑> list</span>
 </code></dt>
 <dd>
 <div class="desc"><p>call the api w/ model and a "READ" operation
@@ -454,18 +481,18 @@ class Api:
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def read(self, model: str, *args: Any, **kwargs: Any) -&gt; list:
+<pre><code class="python">def read(self, model: str, args: Any, kwargs: Any) -&gt; list:
     &#34;&#34;&#34;
     call the api w/ model and a &#34;READ&#34; operation
     :param model: str
     :param args: a list of parameters passed by position
     :param kwargs: a dict of parameters to pass by keyword (optional)
     &#34;&#34;&#34;
-    return self.call(model, Operations.READ, *args, **kwargs)</code></pre>
+    return self.call(model, Operations.READ, args, kwargs)</code></pre>
 </details>
 </dd>
 <dt id="odoo_api_wrapper.api.Api.search"><code class="name flex">
-<span>def <span class="ident">search</span></span>(<span>self, model: str, *args: Any, **kwargs: Any) ‑> list</span>
+<span>def <span class="ident">search</span></span>(<span>self, model: str, args: Any, kwargs: Optional[Dict[str, Any]] = None) ‑> list</span>
 </code></dt>
 <dd>
 <div class="desc"><p>call the api w/ model and a "SEARCH" operation
@@ -476,40 +503,42 @@ class Api:
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def search(self, model: str, *args: Any, **kwargs: Any) -&gt; list:
+<pre><code class="python">def search(
+    self, model: str, args: Any, kwargs: Optional[Dict[str, Any]] = None
+) -&gt; list:
     &#34;&#34;&#34;
     call the api w/ model and a &#34;SEARCH&#34; operation
     :param model: str
     :param args: a list of parameters passed by position
     :param kwargs: a dict of parameters to pass by keyword (optional)
     &#34;&#34;&#34;
-    return self.call(model, Operations.SEARCH, *args, **kwargs)</code></pre>
+    return self.call(model, Operations.SEARCH, args, kwargs)</code></pre>
 </details>
 </dd>
 <dt id="odoo_api_wrapper.api.Api.search_count"><code class="name flex">
-<span>def <span class="ident">search_count</span></span>(<span>self, model: str, *args: Any, **kwargs: Any) ‑> list</span>
+<span>def <span class="ident">search_count</span></span>(<span>self, model: str, args: Any) ‑> int</span>
 </code></dt>
 <dd>
-<div class="desc"><p>call the api w/ model and a "SEARCH_COUNT" operation
-:param model: str
-:param args: a list of parameters passed by position
-:param kwargs: a dict of parameters to pass by keyword (optional)</p></div>
+<div class="desc"><p>Returns the number of records in the current model matching the provided
+domain.</p>
+<p>:param model: str
+:param args: search domain</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def search_count(self, model: str, *args: Any, **kwargs: Any) -&gt; list:
-    &#34;&#34;&#34;
-    call the api w/ model and a &#34;SEARCH_COUNT&#34; operation
+<pre><code class="python">def search_count(self, model: str, args: Any) -&gt; int:
+    &#34;&#34;&#34;Returns the number of records in the current model matching the provided
+    domain.
+
     :param model: str
-    :param args: a list of parameters passed by position
-    :param kwargs: a dict of parameters to pass by keyword (optional)
+    :param args: search domain
     &#34;&#34;&#34;
-    return self.call(model, Operations.SEARCH_COUNT, *args, **kwargs)</code></pre>
+    return self.call(model, Operations.SEARCH_COUNT, args)</code></pre>
 </details>
 </dd>
 <dt id="odoo_api_wrapper.api.Api.search_read"><code class="name flex">
-<span>def <span class="ident">search_read</span></span>(<span>self, model: str, *args: Any, **kwargs: Any) ‑> list</span>
+<span>def <span class="ident">search_read</span></span>(<span>self, model: str, args: Any, kwargs: Any) ‑> list</span>
 </code></dt>
 <dd>
 <div class="desc"><p>call the api w/ model and a "SEARCH_READ" operation
@@ -520,18 +549,18 @@ class Api:
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def search_read(self, model: str, *args: Any, **kwargs: Any) -&gt; list:
+<pre><code class="python">def search_read(self, model: str, args: Any, kwargs: Any) -&gt; list:
     &#34;&#34;&#34;
     call the api w/ model and a &#34;SEARCH_READ&#34; operation
     :param model: str
     :param args: a list of parameters passed by position
     :param kwargs: a dict of parameters to pass by keyword (optional)
     &#34;&#34;&#34;
-    return self.call(model, Operations.SEARCH_READ, *args, **kwargs)</code></pre>
+    return self.call(model, Operations.SEARCH_READ, args, kwargs)</code></pre>
 </details>
 </dd>
 <dt id="odoo_api_wrapper.api.Api.unlink"><code class="name flex">
-<span>def <span class="ident">unlink</span></span>(<span>self, model: str, *args: Any, **kwargs: Any) ‑> list</span>
+<span>def <span class="ident">unlink</span></span>(<span>self, model: str, args: Any, kwargs: Any) ‑> list</span>
 </code></dt>
 <dd>
 <div class="desc"><p>call the api w/ model and a "UNLINK" operation
@@ -542,18 +571,18 @@ class Api:
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def unlink(self, model: str, *args: Any, **kwargs: Any) -&gt; list:
+<pre><code class="python">def unlink(self, model: str, args: Any, kwargs: Any) -&gt; list:
     &#34;&#34;&#34;
     call the api w/ model and a &#34;UNLINK&#34; operation
     :param model: str
     :param args: a list of parameters passed by position
     :param kwargs: a dict of parameters to pass by keyword (optional)
     &#34;&#34;&#34;
-    return self.call(model, Operations.UNLINK, *args, **kwargs)</code></pre>
+    return self.call(model, Operations.UNLINK, args, kwargs)</code></pre>
 </details>
 </dd>
 <dt id="odoo_api_wrapper.api.Api.write"><code class="name flex">
-<span>def <span class="ident">write</span></span>(<span>self, model: str, *args: Any, **kwargs: Any) ‑> list</span>
+<span>def <span class="ident">write</span></span>(<span>self, model: str, args: Any, kwargs: Any) ‑> list</span>
 </code></dt>
 <dd>
 <div class="desc"><p>call the api w/ model and a "WRITE" operation
@@ -564,14 +593,14 @@ class Api:
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def write(self, model: str, *args: Any, **kwargs: Any) -&gt; list:
+<pre><code class="python">def write(self, model: str, args: Any, kwargs: Any) -&gt; list:
     &#34;&#34;&#34;
     call the api w/ model and a &#34;WRITE&#34; operation
     :param model: str
     :param args: a list of parameters passed by position
     :param kwargs: a dict of parameters to pass by keyword (optional)
     &#34;&#34;&#34;
-    return self.call(model, Operations.WRITE, *args, **kwargs)</code></pre>
+    return self.call(model, Operations.WRITE, args, kwargs)</code></pre>
 </details>
 </dd>
 </dl>
