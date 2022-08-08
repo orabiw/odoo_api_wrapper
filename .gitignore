@@ -1,2 +1,3 @@
 .ropeproject
 venv/
+*.egg-info

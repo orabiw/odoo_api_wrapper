@@ -1,12 +1,9 @@
 """ Odoo API wrapper """
 from enum import Enum
 import socket
+import xmlrpc.client
 
-from xmlrpc.client import ServerProxy, Fault
-
-import config
-
-from .errors import APIError
+from odoo_api_wrapper import config, errors
 
 
 class Operations(Enum):
@@ -34,19 +31,19 @@ def call(model: str, operation: Operations, args: tuple, kwargs: dict = None) ->
     uid = kwargs.pop("uid", config.ODOO_API_UID)
     password = kwargs.pop("password", config.ODOO_API_PASSWORD)
 
-    models = ServerProxy(f"{config.ODOO_BASE_URL}/xmlrpc/2/object")
+    models = xmlrpc.client.ServerProxy(f"{config.ODOO_BASE_URL}/xmlrpc/2/object")
 
     if not isinstance(operation, Operations):
-        raise APIError("Invalid operation")
+        raise errors.APIError("Invalid operation")
 
     try:
         return models.execute_kw(
             config.ODOO_DB_NAME, uid, password, model, operation.value, args, kwargs
         )
-    except Fault as error:
-        raise APIError(error.faultString) from error
+    except xmlrpc.client.Fault as error:
+        raise errors.APIError(error.faultString) from error
     except socket.gaierror as error:
-        raise APIError(error) from error
+        raise errors.APIError(error) from error
 
 
 def search_read(model: str, args: tuple, kwargs: dict = None) -> list:
