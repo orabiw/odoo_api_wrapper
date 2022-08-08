@@ -11,4 +11,4 @@ api.search("somemodel", "something")
 ```
 
 """
-from odoo_api_wrapper.api import Api
+from odoo_api_wrapper.api import Api, APIError

@@ -16,7 +16,6 @@ api = odoo_api_wrapper.Api("http://localhost:8069", "db", "1001", "password")
 api.search("somemodel", "something")
 ```
 
-
 """
 import enum
 import socket
@@ -42,7 +41,10 @@ class APIError(Exception):
 
     def __init__(self, description, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.description = description
+        self.description = str(description)
+
+    def __str__(self) -> str:
+        return self.description
 
 
 class Api:
@@ -130,14 +132,14 @@ class Api:
         """
         return self.call(model, Operations.SEARCH, *args, **kwargs)
 
-    def search_count(self, model: str, *args: Any, **kwargs: Any) -> list:
-        """
-        call the api w/ model and a "SEARCH_COUNT" operation
+    def search_count(self, model: str, *args: Any) -> int:
+        """Returns the number of records in the current model matching the provided
+        domain.
+
         :param model: str
-        :param args: a list of parameters passed by position
-        :param kwargs: a dict of parameters to pass by keyword (optional)
+        :param args: search domain
         """
-        return self.call(model, Operations.SEARCH_COUNT, *args, **kwargs)
+        return self.call(model, Operations.SEARCH_COUNT, *args)
 
     def fields_get(self, model: str, *args: Any, **kwargs: Any) -> list:
         """

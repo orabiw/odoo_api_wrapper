@@ -1,3 +1,5 @@
 .ropeproject
 venv/
 *.egg-info
+.tox
+*.coverage
