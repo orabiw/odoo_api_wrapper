@@ -1,4 +1,4 @@
-''' Odoo API wrapper '''
+""" Odoo API wrapper """
 from enum import Enum
 import socket
 
@@ -10,19 +10,19 @@ from .errors import APIError
 
 
 class Operations(Enum):
-    """ Allowed API Operations """
-    WRITE = 'write'
-    CREATE = 'create'
-    READ = 'read'
-    SEARCH = 'search'
-    SEARCH_COUNT = 'search_count'
-    SEARCH_READ = 'search_read'
-    FIELDS_GET = 'fields_get'
-    UNLINK = 'unlink'
+    """Allowed API Operations"""
+
+    WRITE = "write"
+    CREATE = "create"
+    READ = "read"
+    SEARCH = "search"
+    SEARCH_COUNT = "search_count"
+    SEARCH_READ = "search_read"
+    FIELDS_GET = "fields_get"
+    UNLINK = "unlink"
 
 
-def call(model: str, operation: Operations, args: tuple,
-         kwargs: dict = None) -> list:
+def call(model: str, operation: Operations, args: tuple, kwargs: dict = None) -> list:
     """
     call the api w/ model and an operation
     :param model: str
@@ -31,23 +31,22 @@ def call(model: str, operation: Operations, args: tuple,
     :param kwargs: a dict of parameters to pass by keyword (optional)
     """
     kwargs = kwargs if kwargs else {}
-    uid = kwargs.pop('uid', config.ODOO_API_UID)
-    password = kwargs.pop('password', config.ODOO_API_PASSWORD)
+    uid = kwargs.pop("uid", config.ODOO_API_UID)
+    password = kwargs.pop("password", config.ODOO_API_PASSWORD)
 
-    models = ServerProxy('{}/xmlrpc/2/object'.format(config.ODOO_BASE_URL))
+    models = ServerProxy(f"{config.ODOO_BASE_URL}/xmlrpc/2/object")
 
     if not isinstance(operation, Operations):
-        raise APIError('Invalid operation')
+        raise APIError("Invalid operation")
 
     try:
-        return models.execute_kw(config.ODOO_DB_NAME, uid, password, model,
-                                 operation.value,
-                                 args,
-                                 kwargs)
+        return models.execute_kw(
+            config.ODOO_DB_NAME, uid, password, model, operation.value, args, kwargs
+        )
     except Fault as error:
-        raise APIError(error.faultString)
+        raise APIError(error.faultString) from error
     except socket.gaierror as error:
-        raise APIError(error)
+        raise APIError(error) from error
 
 
 def search_read(model: str, args: tuple, kwargs: dict = None) -> list:
