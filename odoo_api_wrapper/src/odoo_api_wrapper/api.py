@@ -1,4 +1,23 @@
-""" Odoo API wrapper """
+""" Odoo API wrapper
+
+`odoo_api_wrapper.api.Api` is the main class, `odoo_api_wrapper.api.Operations` defines
+the operations used for `odoo_api_wrapper.api.Api.call`, raises
+`odoo_api_wrapper.api.APIError`.
+
+## Example Usage
+
+```python
+import odoo_api_wrapper
+
+# Instantiate an `Api`
+api = odoo_api_wrapper.Api("http://localhost:8069", "db", "1001", "password")
+
+# search
+api.search("somemodel", "something")
+```
+
+
+"""
 import enum
 import socket
 import xmlrpc.client
