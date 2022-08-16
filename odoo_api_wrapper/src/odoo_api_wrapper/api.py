@@ -1,26 +1,94 @@
 """ Odoo API wrapper
 
+A wrapper for [Odoo](https://www.odoo.com/)'s External API.
+
+You can check out the official documentation
+[here](https://www.odoo.com/documentation/master/developer/api/external_api.html).
+
 `odoo_api_wrapper.api.Api` is the main class, `odoo_api_wrapper.api.Operations` defines
 the operations used for `odoo_api_wrapper.api.Api.call`, raises
 `odoo_api_wrapper.api.APIError`.
 
-## Example Usage
+## Usage Examples
 
+### Instantiate an `Api`
+Create an instance of the API to start using it.
 ```python
 import odoo_api_wrapper
 
-# Instantiate an `Api`
 api = odoo_api_wrapper.Api("http://localhost:8069", "db", "1001", "password")
+```
 
-# search
+### List records
+Records can be listed and filtered via `search()`.
+```python
 api.search('res.partner', [[['is_company', '=', True]]])
+```
+
+### Count records
+Rather than retrieve a possibly gigantic list of records and count them,
+`search_count()` can be used to retrieve only the number of records matching the query.
+It takes the same domain filter as `search()` and no other parameter.
+```python
+api.search_count('res.partner', [[['is_company', '=', True]]])
+```
+
+### Read records
+Record data are accessible via the `read()` method, which takes a list of ids (as
+returned by `search()`), and optionally a list of fields to fetch. By default, it
+fetches all the fields the current user can read, which tends to be a huge amount.
+```python
+ids = api.search('res.partner', [[['is_company', '=', True]]], {'limit': 1})
+[record] = api.read('res.partner', [ids])
+# count the number of fields fetched by default
+len(record)
+```
+
+### List record fields
+`fields_get()` can be used to inspect a model’s fields and check which ones seem to be
+of interest.
+```python
+api.fields_get('res.partner', [], {'attributes': ['string', 'help', 'type']})
+```
+
+### Search and read
+Because it is a very common task, Odoo provides a `search_read()` shortcut which, as
+its name suggests, is equivalent to a `search()` followed by a `read()`, but avoids
+having to perform two requests and keep ids around.
+```python
+api.search_read(
+    'res.partner',
+    [[['is_company', '=', True]]],
+    {'fields': ['name', 'country_id', 'comment'], 'limit': 5},
+)
+```
+
+### Create records
+Records of a model are created using `create()`. The method creates a single record and
+returns its database identifier.
+```python
+id = api.create('res.partner', [{'name': "New Partner"}])
+```
+
+### Update records
+Records can be updated using `write()`. It takes a list of records to update and a
+mapping of updated fields to values similar to `create()`.
+```python
+api.write('res.partner', [[id], {'name': "Newer partner"}])
+```
+
+### Delete records
+Records can be deleted in bulk by providing their ids to `unlink()`.
+```python
+api.unlink('res.partner', [[id]])
 ```
 
 """
 import enum
+import functools
 import socket
 import xmlrpc.client
-from typing import Any, Dict, Optional
+from typing import Any, Dict
 
 
 class Operations(enum.Enum):
@@ -47,7 +115,7 @@ class APIError(Exception):
         return self.description
 
 
-class Api:
+class Api:  # pylint:disable=too-few-public-methods
     """API Wrapper"""
 
     def __init__(self, base_url: str, db_name: str, uid: str, password: str):
@@ -58,10 +126,13 @@ class Api:
 
         self.server = xmlrpc.client.ServerProxy(f"{self.base_url}/xmlrpc/2/object")
 
+        for operation in Operations.__members__.values():
+            setattr(self, operation.value, functools.partial(self.call, operation))
+
     def call(
         self,
-        model: str,
         operation: Operations,
+        model: str,
         args: Any,
         kwargs: Dict[str, Any] = None,
     ) -> Any:
@@ -92,77 +163,3 @@ class Api:
             raise APIError(error.faultString) from error
         except socket.gaierror as error:
             raise APIError(str(error)) from error
-
-    def search_read(self, model: str, args: Any, kwargs: Any) -> list:
-        """
-        call the api w/ model and a "SEARCH_READ" operation
-        :param model: str
-        :param args: a list of parameters passed by position
-        :param kwargs: a dict of parameters to pass by keyword (optional)
-        """
-        return self.call(model, Operations.SEARCH_READ, args, kwargs)
-
-    def read(self, model: str, args: Any, kwargs: Any) -> list:
-        """
-        call the api w/ model and a "READ" operation
-        :param model: str
-        :param args: a list of parameters passed by position
-        :param kwargs: a dict of parameters to pass by keyword (optional)
-        """
-        return self.call(model, Operations.READ, args, kwargs)
-
-    def write(self, model: str, args: Any, kwargs: Any) -> list:
-        """
-        call the api w/ model and a "WRITE" operation
-        :param model: str
-        :param args: a list of parameters passed by position
-        :param kwargs: a dict of parameters to pass by keyword (optional)
-        """
-        return self.call(model, Operations.WRITE, args, kwargs)
-
-    def create(self, model: str, args: Any, kwargs: Any) -> list:
-        """
-        call the api w/ model and a "CREATE" operation
-        :param model: str
-        :param args: a list of parameters passed by position
-        :param kwargs: a dict of parameters to pass by keyword (optional)
-        """
-        return self.call(model, Operations.CREATE, args, kwargs)
-
-    def search(
-        self, model: str, args: Any, kwargs: Optional[Dict[str, Any]] = None
-    ) -> list:
-        """
-        call the api w/ model and a "SEARCH" operation
-        :param model: str
-        :param args: a list of parameters passed by position
-        :param kwargs: a dict of parameters to pass by keyword (optional)
-        """
-        return self.call(model, Operations.SEARCH, args, kwargs)
-
-    def search_count(self, model: str, args: Any) -> int:
-        """Returns the number of records in the current model matching the provided
-        domain.
-
-        :param model: str
-        :param args: search domain
-        """
-        return self.call(model, Operations.SEARCH_COUNT, args)
-
-    def fields_get(self, model: str, args: Any, kwargs: Any) -> list:
-        """
-        call the api w/ model and a "FIELDS_GET" operation
-        :param model: str
-        :param args: a list of parameters passed by position
-        :param kwargs: a dict of parameters to pass by keyword (optional)
-        """
-        return self.call(model, Operations.FIELDS_GET, args, kwargs)
-
-    def unlink(self, model: str, args: Any, kwargs: Any) -> list:
-        """
-        call the api w/ model and a "UNLINK" operation
-        :param model: str
-        :param args: a list of parameters passed by position
-        :param kwargs: a dict of parameters to pass by keyword (optional)
-        """
-        return self.call(model, Operations.UNLINK, args, kwargs)
