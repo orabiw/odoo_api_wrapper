@@ -88,7 +88,7 @@ import enum
 import functools
 import socket
 import xmlrpc.client
-from typing import Any, Callable, Dict
+from typing import Any, Callable, Dict, List
 
 
 class Operations(enum.Enum):
@@ -119,14 +119,14 @@ class Api:  # pylint:disable=too-few-public-methods
     """API Wrapper"""
 
     # define the methods we'll add dynamically
-    write: Callable[[str, Any, Dict[str, Any]], Any]
-    create: Callable[[str, Any, Dict[str, Any]], Any]
-    read: Callable[[str, Any, Dict[str, Any]], Any]
-    search: Callable[[str, Any, Dict[str, Any]], Any]
-    search_count: Callable[[str, Any, Dict[str, Any]], Any]
-    search_read: Callable[[str, Any, Dict[str, Any]], Any]
-    fields_get: Callable[[str, Any, Dict[str, Any]], Any]
-    unlink: Callable[[str, Any, Dict[str, Any]], Any]
+    write: Callable[[str, List, Dict[str, Any]], Any]
+    create: Callable[[str, List, Dict[str, Any]], Any]
+    read: Callable[[str, List, Dict[str, Any]], Any]
+    search: Callable[[str, List, Dict[str, Any]], Any]
+    search_count: Callable[[str, List, Dict[str, Any]], Any]
+    search_read: Callable[[str, List, Dict[str, Any]], Any]
+    fields_get: Callable[[str, List, Dict[str, Any]], Any]
+    unlink: Callable[[str, List, Dict[str, Any]], Any]
 
     def __new__(cls, *args, **kwargs):  # pylint:disable=unused-argument
         instance = super().__new__(cls)
@@ -153,7 +153,7 @@ class Api:  # pylint:disable=too-few-public-methods
         self,
         operation: Operations,
         model: str,
-        args: Any,
+        args: List,
         kwargs: Dict[str, Any] = None,
     ) -> Any:
         """
