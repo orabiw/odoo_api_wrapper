@@ -156,13 +156,13 @@ class Api:  # pylint:disable=too-few-public-methods
         args: List,
         kwargs: Dict[str, Any] = None,
     ) -> Any:
-        """
-        Call the api w/ model and an operation
+        """Call the api with a model and an operation
 
-        :param model: str
-        :param operation: Operations
-        :param args: a list of parameters passed by position
-        :param kwargs: a dict of parameters to pass by keyword (optional)
+        Args:
+            operation: the operation to call
+            model: the name of the model
+            args: a list of parameters passed by position
+            kwargs: a dict of parameters to pass by keyword (optional)
         """
         if not isinstance(operation, Operations):
             raise APIError("Invalid operation")
