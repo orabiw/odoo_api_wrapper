@@ -178,7 +178,7 @@ import enum
 import functools
 import socket
 import xmlrpc.client
-from typing import Any, Dict
+from typing import Any, Callable, Dict, List
 
 
 class Operations(enum.Enum):
@@ -208,6 +208,29 @@ class APIError(Exception):
 class Api:  # pylint:disable=too-few-public-methods
     &#34;&#34;&#34;API Wrapper&#34;&#34;&#34;
 
+    # define the methods we&#39;ll add dynamically
+    write: Callable[[str, List, Dict[str, Any]], Any]
+    create: Callable[[str, List, Dict[str, Any]], Any]
+    read: Callable[[str, List, Dict[str, Any]], Any]
+    search: Callable[[str, List, Dict[str, Any]], Any]
+    search_count: Callable[[str, List, Dict[str, Any]], Any]
+    search_read: Callable[[str, List, Dict[str, Any]], Any]
+    fields_get: Callable[[str, List, Dict[str, Any]], Any]
+    unlink: Callable[[str, List, Dict[str, Any]], Any]
+
+    def __new__(cls, *args, **kwargs):  # pylint:disable=unused-argument
+        instance = super().__new__(cls)
+
+        # add the dynamic method
+        for operation in Operations.__members__.values():
+            setattr(
+                instance,
+                operation.value,
+                functools.partial(instance.call, operation),
+            )
+
+        return instance
+
     def __init__(self, base_url: str, db_name: str, uid: str, password: str):
         self.base_url = base_url
         self.db_name = db_name
@@ -216,23 +239,20 @@ class Api:  # pylint:disable=too-few-public-methods
 
         self.server = xmlrpc.client.ServerProxy(f&#34;{self.base_url}/xmlrpc/2/object&#34;)
 
-        for operation in Operations.__members__.values():
-            setattr(self, operation.value, functools.partial(self.call, operation))
-
     def call(
         self,
         operation: Operations,
         model: str,
-        args: Any,
+        args: List,
         kwargs: Dict[str, Any] = None,
     ) -&gt; Any:
-        &#34;&#34;&#34;
-        Call the api w/ model and an operation
+        &#34;&#34;&#34;Call the api with a model and an operation
 
-        :param model: str
-        :param operation: Operations
-        :param args: a list of parameters passed by position
-        :param kwargs: a dict of parameters to pass by keyword (optional)
+        Args:
+            operation: the operation to call
+            model: the name of the model
+            args: a list of parameters passed by position
+            kwargs: a dict of parameters to pass by keyword (optional)
         &#34;&#34;&#34;
         if not isinstance(operation, Operations):
             raise APIError(&#34;Invalid operation&#34;)
@@ -303,6 +323,29 @@ class Api:  # pylint:disable=too-few-public-methods
 <pre><code class="python">class Api:  # pylint:disable=too-few-public-methods
     &#34;&#34;&#34;API Wrapper&#34;&#34;&#34;
 
+    # define the methods we&#39;ll add dynamically
+    write: Callable[[str, List, Dict[str, Any]], Any]
+    create: Callable[[str, List, Dict[str, Any]], Any]
+    read: Callable[[str, List, Dict[str, Any]], Any]
+    search: Callable[[str, List, Dict[str, Any]], Any]
+    search_count: Callable[[str, List, Dict[str, Any]], Any]
+    search_read: Callable[[str, List, Dict[str, Any]], Any]
+    fields_get: Callable[[str, List, Dict[str, Any]], Any]
+    unlink: Callable[[str, List, Dict[str, Any]], Any]
+
+    def __new__(cls, *args, **kwargs):  # pylint:disable=unused-argument
+        instance = super().__new__(cls)
+
+        # add the dynamic method
+        for operation in Operations.__members__.values():
+            setattr(
+                instance,
+                operation.value,
+                functools.partial(instance.call, operation),
+            )
+
+        return instance
+
     def __init__(self, base_url: str, db_name: str, uid: str, password: str):
         self.base_url = base_url
         self.db_name = db_name
@@ -311,23 +354,20 @@ class Api:  # pylint:disable=too-few-public-methods
 
         self.server = xmlrpc.client.ServerProxy(f&#34;{self.base_url}/xmlrpc/2/object&#34;)
 
-        for operation in Operations.__members__.values():
-            setattr(self, operation.value, functools.partial(self.call, operation))
-
     def call(
         self,
         operation: Operations,
         model: str,
-        args: Any,
+        args: List,
         kwargs: Dict[str, Any] = None,
     ) -&gt; Any:
-        &#34;&#34;&#34;
-        Call the api w/ model and an operation
+        &#34;&#34;&#34;Call the api with a model and an operation
 
-        :param model: str
-        :param operation: Operations
-        :param args: a list of parameters passed by position
-        :param kwargs: a dict of parameters to pass by keyword (optional)
+        Args:
+            operation: the operation to call
+            model: the name of the model
+            args: a list of parameters passed by position
+            kwargs: a dict of parameters to pass by keyword (optional)
         &#34;&#34;&#34;
         if not isinstance(operation, Operations):
             raise APIError(&#34;Invalid operation&#34;)
@@ -349,17 +389,59 @@ class Api:  # pylint:disable=too-few-public-methods
         except socket.gaierror as error:
             raise APIError(str(error)) from error</code></pre>
 </details>
+<h3>Class variables</h3>
+<dl>
+<dt id="odoo_api_wrapper.api.Api.create"><code class="name">var <span class="ident">create</span> : Callable[[str, List, Dict[str, Any]], Any]</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="odoo_api_wrapper.api.Api.fields_get"><code class="name">var <span class="ident">fields_get</span> : Callable[[str, List, Dict[str, Any]], Any]</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="odoo_api_wrapper.api.Api.read"><code class="name">var <span class="ident">read</span> : Callable[[str, List, Dict[str, Any]], Any]</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="odoo_api_wrapper.api.Api.search"><code class="name">var <span class="ident">search</span> : Callable[[str, List, Dict[str, Any]], Any]</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="odoo_api_wrapper.api.Api.search_count"><code class="name">var <span class="ident">search_count</span> : Callable[[str, List, Dict[str, Any]], Any]</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="odoo_api_wrapper.api.Api.search_read"><code class="name">var <span class="ident">search_read</span> : Callable[[str, List, Dict[str, Any]], Any]</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="odoo_api_wrapper.api.Api.unlink"><code class="name">var <span class="ident">unlink</span> : Callable[[str, List, Dict[str, Any]], Any]</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="odoo_api_wrapper.api.Api.write"><code class="name">var <span class="ident">write</span> : Callable[[str, List, Dict[str, Any]], Any]</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+</dl>
 <h3>Methods</h3>
 <dl>
 <dt id="odoo_api_wrapper.api.Api.call"><code class="name flex">
-<span>def <span class="ident">call</span></span>(<span>self, operation: <a title="odoo_api_wrapper.api.Operations" href="#odoo_api_wrapper.api.Operations">Operations</a>, model: str, args: Any, kwargs: Dict[str, Any] = None) ‑> Any</span>
+<span>def <span class="ident">call</span></span>(<span>self, operation: <a title="odoo_api_wrapper.api.Operations" href="#odoo_api_wrapper.api.Operations">Operations</a>, model: str, args: List, kwargs: Dict[str, Any] = None) ‑> Any</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Call the api w/ model and an operation</p>
-<p>:param model: str
-:param operation: Operations
-:param args: a list of parameters passed by position
-:param kwargs: a dict of parameters to pass by keyword (optional)</p></div>
+<div class="desc"><p>Call the api with a model and an operation</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>operation</code></strong></dt>
+<dd>the operation to call</dd>
+<dt><strong><code>model</code></strong></dt>
+<dd>the name of the model</dd>
+<dt><strong><code>args</code></strong></dt>
+<dd>a list of parameters passed by position</dd>
+<dt><strong><code>kwargs</code></strong></dt>
+<dd>a dict of parameters to pass by keyword (optional)</dd>
+</dl></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -368,16 +450,16 @@ class Api:  # pylint:disable=too-few-public-methods
     self,
     operation: Operations,
     model: str,
-    args: Any,
+    args: List,
     kwargs: Dict[str, Any] = None,
 ) -&gt; Any:
-    &#34;&#34;&#34;
-    Call the api w/ model and an operation
+    &#34;&#34;&#34;Call the api with a model and an operation
 
-    :param model: str
-    :param operation: Operations
-    :param args: a list of parameters passed by position
-    :param kwargs: a dict of parameters to pass by keyword (optional)
+    Args:
+        operation: the operation to call
+        model: the name of the model
+        args: a list of parameters passed by position
+        kwargs: a dict of parameters to pass by keyword (optional)
     &#34;&#34;&#34;
     if not isinstance(operation, Operations):
         raise APIError(&#34;Invalid operation&#34;)
@@ -498,8 +580,16 @@ class Api:  # pylint:disable=too-few-public-methods
 </li>
 <li>
 <h4><code><a title="odoo_api_wrapper.api.Api" href="#odoo_api_wrapper.api.Api">Api</a></code></h4>
-<ul class="">
+<ul class="two-column">
 <li><code><a title="odoo_api_wrapper.api.Api.call" href="#odoo_api_wrapper.api.Api.call">call</a></code></li>
+<li><code><a title="odoo_api_wrapper.api.Api.create" href="#odoo_api_wrapper.api.Api.create">create</a></code></li>
+<li><code><a title="odoo_api_wrapper.api.Api.fields_get" href="#odoo_api_wrapper.api.Api.fields_get">fields_get</a></code></li>
+<li><code><a title="odoo_api_wrapper.api.Api.read" href="#odoo_api_wrapper.api.Api.read">read</a></code></li>
+<li><code><a title="odoo_api_wrapper.api.Api.search" href="#odoo_api_wrapper.api.Api.search">search</a></code></li>
+<li><code><a title="odoo_api_wrapper.api.Api.search_count" href="#odoo_api_wrapper.api.Api.search_count">search_count</a></code></li>
+<li><code><a title="odoo_api_wrapper.api.Api.search_read" href="#odoo_api_wrapper.api.Api.search_read">search_read</a></code></li>
+<li><code><a title="odoo_api_wrapper.api.Api.unlink" href="#odoo_api_wrapper.api.Api.unlink">unlink</a></code></li>
+<li><code><a title="odoo_api_wrapper.api.Api.write" href="#odoo_api_wrapper.api.Api.write">write</a></code></li>
 </ul>
 </li>
 <li>

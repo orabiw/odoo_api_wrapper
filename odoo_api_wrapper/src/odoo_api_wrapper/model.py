@@ -1,12 +1,4 @@
-""" A wrapper for Odoo's xml-rpc api, provides a simple wrapper class to access common
-operations.
-
-You can check out the official documentation
-[here](https://www.odoo.com/documentation/master/developer/api/external_api.html).
-
-`odoo_api_wrapper.api.Api` is the main class, `odoo_api_wrapper.api.Operations` defines
-the operations used for `odoo_api_wrapper.api.Api.call`, raises
-`odoo_api_wrapper.api.APIError`.
+""" Odoo model class
 
 ## Usage Examples
 
@@ -85,6 +77,38 @@ Records can be deleted in bulk by providing their ids to `unlink()`.
 ```python
 partner.unlink([[id]])
 ```
+
 """
-from odoo_api_wrapper.api import Api, APIError, Operations
-from odoo_api_wrapper.model import Model
+import functools
+from typing import Any, Callable, Dict, List
+
+import odoo_api_wrapper
+
+
+class Model:  # pylint:disable=too-few-public-methods
+    """Odoo model"""
+
+    # define the methods we'll add dynamically
+    write: Callable[[List, Dict[str, Any]], Any]
+    create: Callable[[List, Dict[str, Any]], Any]
+    read: Callable[[List, Dict[str, Any]], Any]
+    search: Callable[[List, Dict[str, Any]], Any]
+    search_count: Callable[[List, Dict[str, Any]], Any]
+    search_read: Callable[[List, Dict[str, Any]], Any]
+    fields_get: Callable[[List, Dict[str, Any]], Any]
+    unlink: Callable[[List, Dict[str, Any]], Any]
+
+    def __new__(  # pylint:disable=unused-argument
+        cls,
+        api: odoo_api_wrapper.api.Api,
+        model_name: str,
+        *args,
+        **kwargs,
+    ):
+        instance = super().__new__(cls)
+
+        for operation in odoo_api_wrapper.Operations.__members__.values():
+            func = getattr(api, operation.value)
+            setattr(instance, operation.value, functools.partial(func, model_name))
+
+        return instance

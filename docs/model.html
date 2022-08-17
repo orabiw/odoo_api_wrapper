@@ -4,9 +4,8 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
 <meta name="generator" content="pdoc 0.10.0" />
-<title>odoo_api_wrapper API documentation</title>
-<meta name="description" content="A wrapper for Odoo&#39;s xml-rpc api, provides a simple wrapper class to access common
-operations …" />
+<title>odoo_api_wrapper.model API documentation</title>
+<meta name="description" content="Odoo model class …" />
 <link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
 <link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
 <link rel="stylesheet preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/github.min.css" crossorigin>
@@ -20,16 +19,10 @@ operations …" />
 <main>
 <article id="content">
 <header>
-<h1 class="title">Package <code>odoo_api_wrapper</code></h1>
+<h1 class="title">Module <code>odoo_api_wrapper.model</code></h1>
 </header>
 <section id="section-intro">
-<p>A wrapper for Odoo's xml-rpc api, provides a simple wrapper class to access common
-operations.</p>
-<p>You can check out the official documentation
-<a href="https://www.odoo.com/documentation/master/developer/api/external_api.html">here</a>.</p>
-<p><code><a title="odoo_api_wrapper.api.Api" href="api.html#odoo_api_wrapper.api.Api">Api</a></code> is the main class, <code><a title="odoo_api_wrapper.api.Operations" href="api.html#odoo_api_wrapper.api.Operations">Operations</a></code> defines
-the operations used for <code><a title="odoo_api_wrapper.api.Api.call" href="api.html#odoo_api_wrapper.api.Api.call">Api.call()</a></code>, raises
-<code><a title="odoo_api_wrapper.api.APIError" href="api.html#odoo_api_wrapper.api.APIError">APIError</a></code>.</p>
+<p>Odoo model class</p>
 <h2 id="usage-examples">Usage Examples</h2>
 <h3 id="instantiate-an-api">Instantiate an <code>Api</code></h3>
 <p>Create an instance of the API to start using it.</p>
@@ -91,15 +84,7 @@ mapping of updated fields to values similar to <code>create()</code>.</p>
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">&#34;&#34;&#34; A wrapper for Odoo&#39;s xml-rpc api, provides a simple wrapper class to access common
-operations.
-
-You can check out the official documentation
-[here](https://www.odoo.com/documentation/master/developer/api/external_api.html).
-
-`odoo_api_wrapper.api.Api` is the main class, `odoo_api_wrapper.api.Operations` defines
-the operations used for `odoo_api_wrapper.api.Api.call`, raises
-`odoo_api_wrapper.api.APIError`.
+<pre><code class="python">&#34;&#34;&#34; Odoo model class
 
 ## Usage Examples
 
@@ -178,29 +163,127 @@ Records can be deleted in bulk by providing their ids to `unlink()`.
 ```python
 partner.unlink([[id]])
 ```
+
 &#34;&#34;&#34;
-from odoo_api_wrapper.api import Api, APIError, Operations
-from odoo_api_wrapper.model import Model</code></pre>
+import functools
+from typing import Any, Callable, Dict, List
+
+import odoo_api_wrapper
+
+
+class Model:  # pylint:disable=too-few-public-methods
+    &#34;&#34;&#34;Odoo model&#34;&#34;&#34;
+
+    # define the methods we&#39;ll add dynamically
+    write: Callable[[List, Dict[str, Any]], Any]
+    create: Callable[[List, Dict[str, Any]], Any]
+    read: Callable[[List, Dict[str, Any]], Any]
+    search: Callable[[List, Dict[str, Any]], Any]
+    search_count: Callable[[List, Dict[str, Any]], Any]
+    search_read: Callable[[List, Dict[str, Any]], Any]
+    fields_get: Callable[[List, Dict[str, Any]], Any]
+    unlink: Callable[[List, Dict[str, Any]], Any]
+
+    def __new__(  # pylint:disable=unused-argument
+        cls,
+        api: odoo_api_wrapper.api.Api,
+        model_name: str,
+        *args,
+        **kwargs,
+    ):
+        instance = super().__new__(cls)
+
+        for operation in odoo_api_wrapper.Operations.__members__.values():
+            func = getattr(api, operation.value)
+            setattr(instance, operation.value, functools.partial(func, model_name))
+
+        return instance</code></pre>
 </details>
 </section>
 <section>
-<h2 class="section-title" id="header-submodules">Sub-modules</h2>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-classes">Classes</h2>
 <dl>
-<dt><code class="name"><a title="odoo_api_wrapper.api" href="api.html">odoo_api_wrapper.api</a></code></dt>
+<dt id="odoo_api_wrapper.model.Model"><code class="flex name class">
+<span>class <span class="ident">Model</span></span>
+<span>(</span><span>api: <a title="odoo_api_wrapper.api.Api" href="api.html#odoo_api_wrapper.api.Api">Api</a>, model_name: str, *args, **kwargs)</span>
+</code></dt>
 <dd>
-<div class="desc"><p>Odoo API wrapper …</p></div>
+<div class="desc"><p>Odoo model</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class Model:  # pylint:disable=too-few-public-methods
+    &#34;&#34;&#34;Odoo model&#34;&#34;&#34;
+
+    # define the methods we&#39;ll add dynamically
+    write: Callable[[List, Dict[str, Any]], Any]
+    create: Callable[[List, Dict[str, Any]], Any]
+    read: Callable[[List, Dict[str, Any]], Any]
+    search: Callable[[List, Dict[str, Any]], Any]
+    search_count: Callable[[List, Dict[str, Any]], Any]
+    search_read: Callable[[List, Dict[str, Any]], Any]
+    fields_get: Callable[[List, Dict[str, Any]], Any]
+    unlink: Callable[[List, Dict[str, Any]], Any]
+
+    def __new__(  # pylint:disable=unused-argument
+        cls,
+        api: odoo_api_wrapper.api.Api,
+        model_name: str,
+        *args,
+        **kwargs,
+    ):
+        instance = super().__new__(cls)
+
+        for operation in odoo_api_wrapper.Operations.__members__.values():
+            func = getattr(api, operation.value)
+            setattr(instance, operation.value, functools.partial(func, model_name))
+
+        return instance</code></pre>
+</details>
+<h3>Class variables</h3>
+<dl>
+<dt id="odoo_api_wrapper.model.Model.create"><code class="name">var <span class="ident">create</span> : Callable[[List, Dict[str, Any]], Any]</code></dt>
+<dd>
+<div class="desc"></div>
 </dd>
-<dt><code class="name"><a title="odoo_api_wrapper.model" href="model.html">odoo_api_wrapper.model</a></code></dt>
+<dt id="odoo_api_wrapper.model.Model.fields_get"><code class="name">var <span class="ident">fields_get</span> : Callable[[List, Dict[str, Any]], Any]</code></dt>
 <dd>
-<div class="desc"><p>Odoo model class …</p></div>
+<div class="desc"></div>
+</dd>
+<dt id="odoo_api_wrapper.model.Model.read"><code class="name">var <span class="ident">read</span> : Callable[[List, Dict[str, Any]], Any]</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="odoo_api_wrapper.model.Model.search"><code class="name">var <span class="ident">search</span> : Callable[[List, Dict[str, Any]], Any]</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="odoo_api_wrapper.model.Model.search_count"><code class="name">var <span class="ident">search_count</span> : Callable[[List, Dict[str, Any]], Any]</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="odoo_api_wrapper.model.Model.search_read"><code class="name">var <span class="ident">search_read</span> : Callable[[List, Dict[str, Any]], Any]</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="odoo_api_wrapper.model.Model.unlink"><code class="name">var <span class="ident">unlink</span> : Callable[[List, Dict[str, Any]], Any]</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="odoo_api_wrapper.model.Model.write"><code class="name">var <span class="ident">write</span> : Callable[[List, Dict[str, Any]], Any]</code></dt>
+<dd>
+<div class="desc"></div>
 </dd>
 </dl>
-</section>
-<section>
-</section>
-<section>
-</section>
-<section>
+</dd>
+</dl>
 </section>
 </article>
 <nav id="sidebar">
@@ -223,10 +306,26 @@ from odoo_api_wrapper.model import Model</code></pre>
 </ul>
 </div>
 <ul id="index">
-<li><h3><a href="#header-submodules">Sub-modules</a></h3>
+<li><h3>Super-module</h3>
 <ul>
-<li><code><a title="odoo_api_wrapper.api" href="api.html">odoo_api_wrapper.api</a></code></li>
-<li><code><a title="odoo_api_wrapper.model" href="model.html">odoo_api_wrapper.model</a></code></li>
+<li><code><a title="odoo_api_wrapper" href="index.html">odoo_api_wrapper</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-classes">Classes</a></h3>
+<ul>
+<li>
+<h4><code><a title="odoo_api_wrapper.model.Model" href="#odoo_api_wrapper.model.Model">Model</a></code></h4>
+<ul class="two-column">
+<li><code><a title="odoo_api_wrapper.model.Model.create" href="#odoo_api_wrapper.model.Model.create">create</a></code></li>
+<li><code><a title="odoo_api_wrapper.model.Model.fields_get" href="#odoo_api_wrapper.model.Model.fields_get">fields_get</a></code></li>
+<li><code><a title="odoo_api_wrapper.model.Model.read" href="#odoo_api_wrapper.model.Model.read">read</a></code></li>
+<li><code><a title="odoo_api_wrapper.model.Model.search" href="#odoo_api_wrapper.model.Model.search">search</a></code></li>
+<li><code><a title="odoo_api_wrapper.model.Model.search_count" href="#odoo_api_wrapper.model.Model.search_count">search_count</a></code></li>
+<li><code><a title="odoo_api_wrapper.model.Model.search_read" href="#odoo_api_wrapper.model.Model.search_read">search_read</a></code></li>
+<li><code><a title="odoo_api_wrapper.model.Model.unlink" href="#odoo_api_wrapper.model.Model.unlink">unlink</a></code></li>
+<li><code><a title="odoo_api_wrapper.model.Model.write" href="#odoo_api_wrapper.model.Model.write">write</a></code></li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>

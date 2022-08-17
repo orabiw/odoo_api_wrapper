@@ -36,8 +36,8 @@ def mock_server():
 
 
 @pytest.fixture
-def model(random_string):
-    """model fixture"""
+def model_name(random_string):
+    """model_name fixture"""
     return random_string()
 
 
