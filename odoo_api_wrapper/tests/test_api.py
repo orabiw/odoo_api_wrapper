@@ -13,11 +13,14 @@ def test_api_init(init_params):
     assert odoo_api_wrapper.Api(*init_params)
 
 
-def test_api_search(mock_server, init_params, model, args, kwargs):
+def test_api_search(mock_server, init_params, model):
     """test api.search"""
     del mock_server
 
     api = odoo_api_wrapper.Api(*init_params)
+
+    args = [[["is_company", "=", True]]]
+    kwargs = {}
 
     assert api.search(model, args, kwargs)
     api.server.execute_kw.assert_called_with(
@@ -25,11 +28,14 @@ def test_api_search(mock_server, init_params, model, args, kwargs):
     )
 
 
-def test_api_search_read(mock_server, init_params, model, args, kwargs):
+def test_api_search_read(mock_server, init_params, model):
     """test api.search_read"""
     del mock_server
 
     api = odoo_api_wrapper.Api(*init_params)
+
+    args = [[["is_company", "=", True]]]
+    kwargs = {"fields": ["name", "country_id", "comment"], "limit": 5}
 
     assert api.search_read(model, args, kwargs)
     api.server.execute_kw.assert_called_with(
@@ -37,11 +43,14 @@ def test_api_search_read(mock_server, init_params, model, args, kwargs):
     )
 
 
-def test_api_read(mock_server, init_params, model, args, kwargs):
+def test_api_read(mock_server, init_params, model):
     """test api.read"""
     del mock_server
 
     api = odoo_api_wrapper.Api(*init_params)
+
+    args = [[["is_company", "=", True]]]
+    kwargs = {"limit": 1}
 
     assert api.read(model, args, kwargs)
     api.server.execute_kw.assert_called_with(
@@ -49,11 +58,14 @@ def test_api_read(mock_server, init_params, model, args, kwargs):
     )
 
 
-def test_api_write(mock_server, init_params, model, args, kwargs):
+def test_api_write(mock_server, init_params, model):
     """test api.write"""
     del mock_server
 
     api = odoo_api_wrapper.Api(*init_params)
+
+    args = [[1], {"name": "Newer partner"}]
+    kwargs = {}
 
     assert api.write(model, args, kwargs)
     api.server.execute_kw.assert_called_with(
@@ -61,11 +73,14 @@ def test_api_write(mock_server, init_params, model, args, kwargs):
     )
 
 
-def test_api_create(mock_server, init_params, model, args, kwargs):
+def test_api_create(mock_server, init_params, model):
     """test api.create"""
     del mock_server
 
     api = odoo_api_wrapper.Api(*init_params)
+
+    args = [{"name": "New Partner"}]
+    kwargs = {}
 
     assert api.create(model, args, kwargs)
     api.server.execute_kw.assert_called_with(
@@ -73,11 +88,14 @@ def test_api_create(mock_server, init_params, model, args, kwargs):
     )
 
 
-def test_api_fields_get(mock_server, init_params, model, args, kwargs):
+def test_api_fields_get(mock_server, init_params, model):
     """test api.fields_get"""
     del mock_server
 
     api = odoo_api_wrapper.Api(*init_params)
+
+    args = []
+    kwargs = {"attributes": ["string", "help", "type"]}
 
     assert api.fields_get(model, args, kwargs)
     api.server.execute_kw.assert_called_with(
@@ -97,13 +115,17 @@ def test_api_search_count(mock_server, init_params, model, args):
     )
 
 
-def test_api_unlink(mock_server, init_params, model, args, kwargs):
+def test_api_unlink(mock_server, init_params, model):
     """test api.unlink"""
     del mock_server
 
     api = odoo_api_wrapper.Api(*init_params)
 
+    args = [[1]]
+    kwargs = {}
+
     assert api.unlink(model, args, kwargs)
+
     api.server.execute_kw.assert_called_with(
         *init_params[1:], model, "unlink", args, kwargs
     )
