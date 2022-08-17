@@ -88,7 +88,7 @@ import enum
 import functools
 import socket
 import xmlrpc.client
-from typing import Any, Dict
+from typing import Any, Callable, Dict
 
 
 class Operations(enum.Enum):
@@ -118,6 +118,29 @@ class APIError(Exception):
 class Api:  # pylint:disable=too-few-public-methods
     """API Wrapper"""
 
+    # define the methods we'll add dynamically
+    write: Callable[[str, Any, Dict[str, Any]], Any]
+    create: Callable[[str, Any, Dict[str, Any]], Any]
+    read: Callable[[str, Any, Dict[str, Any]], Any]
+    search: Callable[[str, Any, Dict[str, Any]], Any]
+    search_count: Callable[[str, Any, Dict[str, Any]], Any]
+    search_read: Callable[[str, Any, Dict[str, Any]], Any]
+    fields_get: Callable[[str, Any, Dict[str, Any]], Any]
+    unlink: Callable[[str, Any, Dict[str, Any]], Any]
+
+    def __new__(cls, *args, **kwargs):  # pylint:disable=unused-argument
+        instance = super().__new__(cls)
+
+        # add the dynamic method
+        for operation in Operations.__members__.values():
+            setattr(
+                instance,
+                operation.value,
+                functools.partial(instance.call, operation),
+            )
+
+        return instance
+
     def __init__(self, base_url: str, db_name: str, uid: str, password: str):
         self.base_url = base_url
         self.db_name = db_name
@@ -125,9 +148,6 @@ class Api:  # pylint:disable=too-few-public-methods
         self.password = password
 
         self.server = xmlrpc.client.ServerProxy(f"{self.base_url}/xmlrpc/2/object")
-
-        for operation in Operations.__members__.values():
-            setattr(self, operation.value, functools.partial(self.call, operation))
 
     def call(
         self,
