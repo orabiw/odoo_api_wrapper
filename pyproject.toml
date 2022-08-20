@@ -1,6 +1,13 @@
 [project]
 name = "odoo_api_wrapper"
 version = "0.2.0"
+description = "A wrapper for Odoo's External API."
+readme = "README.md"
+keywords = ["odoo", "xml-rpc"]
+requires-python = ">=3.9"
+
+[project.urls]
+Homepage = "https://orabiw.github.io/odoo_api_wrapper/"
 
 [build-system]
 requires = ["setuptools", "wheel"]
