@@ -8,6 +8,13 @@ You can check out the official documentation
 the operations used for `odoo_api_wrapper.api.Api.call`, raises
 `odoo_api_wrapper.api.APIError`.
 
+
+## Installation
+
+```
+pip install odoo-api-wrapper
+```
+
 ## Usage Examples
 
 ### Instantiate an `Api`
@@ -89,4 +96,4 @@ partner.unlink([[id]])
 from odoo_api_wrapper.api import Api, APIError, Operations
 from odoo_api_wrapper.model import Model
 
-__version__ = "0.2.2"
+__version__ = "0.2.3"

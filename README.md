@@ -9,6 +9,12 @@ You can check out the official documentation
 the operations used for `odoo_api_wrapper.api.Api.call`, raises
 `odoo_api_wrapper.api.APIError`.
 
+## Installation
+
+```
+pip install odoo-api-wrapper
+```
+
 ## Usage Examples
 
 ### Instantiate an `Api`
