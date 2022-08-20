@@ -89,4 +89,4 @@ partner.unlink([[id]])
 from odoo_api_wrapper.api import Api, APIError, Operations
 from odoo_api_wrapper.model import Model
 
-__version__ = "0.2.1"
+__version__ = "0.2.2"
