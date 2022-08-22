@@ -1,0 +1,254 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
+<meta name="generator" content="pdoc 0.10.0" />
+<title>odoo_api_wrapper API documentation</title>
+<meta name="description" content="A wrapper for Odoo&#39;s xml-rpc api, provides a simple wrapper class to access common
+operations …" />
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
+<link rel="stylesheet preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/github.min.css" crossorigin>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:30px;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:1em 0 .50em 0}h3{font-size:1.4em;margin:25px 0 10px 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .3s ease-in-out}a:hover{color:#e82}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900}pre code{background:#f8f8f8;font-size:.8em;line-height:1.4em}code{background:#f2f2f1;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{background:#f8f8f8;border:0;border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0;padding:1ex}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-weight:bold;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em .5em;margin-bottom:1em}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.item .name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul{padding-left:1.5em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/highlight.min.js" integrity="sha256-Uv3H6lx7dJmRfRvH8TH6kJD1TSK1aFcwgx+mdg3epi8=" crossorigin></script>
+<script>window.addEventListener('DOMContentLoaded', () => hljs.initHighlighting())</script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Package <code>odoo_api_wrapper</code></h1>
+</header>
+<section id="section-intro">
+<p>A wrapper for Odoo's xml-rpc api, provides a simple wrapper class to access common
+operations.</p>
+<p>You can check out the official documentation
+<a href="https://www.odoo.com/documentation/master/developer/api/external_api.html">here</a>.</p>
+<p><code><a title="odoo_api_wrapper.api.Api" href="api.html#odoo_api_wrapper.api.Api">Api</a></code> is the main class, <code><a title="odoo_api_wrapper.api.Operations" href="api.html#odoo_api_wrapper.api.Operations">Operations</a></code> defines
+the operations used for <code><a title="odoo_api_wrapper.api.Api.call" href="api.html#odoo_api_wrapper.api.Api.call">Api.call()</a></code>, raises
+<code><a title="odoo_api_wrapper.api.APIError" href="api.html#odoo_api_wrapper.api.APIError">APIError</a></code>.</p>
+<h2 id="installation">Installation</h2>
+<pre><code>pip install odoo-api-wrapper
+</code></pre>
+<h2 id="usage-examples">Usage Examples</h2>
+<h3 id="instantiate-an-api">Instantiate an <code>Api</code></h3>
+<p>Create an instance of the API to start using it.</p>
+<pre><code class="language-python">import odoo_api_wrapper
+
+api = odoo_api_wrapper.Api(&quot;http://localhost:8069&quot;, &quot;db&quot;, &quot;1001&quot;, &quot;password&quot;)
+</code></pre>
+<h3 id="define-your-model">Define your model</h3>
+<pre><code class="language-python">partner = odoo_api_wrapper.Model(api, &quot;res.partner&quot;)
+</code></pre>
+<h3 id="list-records">List records</h3>
+<p>Records can be listed and filtered via <code>search()</code>.</p>
+<pre><code class="language-python">partner.search([[['is_company', '=', True]]])
+</code></pre>
+<h3 id="count-records">Count records</h3>
+<p>Rather than retrieve a possibly gigantic list of records and count them,
+<code>search_count()</code> can be used to retrieve only the number of records matching the query.
+It takes the same domain filter as <code>search()</code> and no other parameter.</p>
+<pre><code class="language-python">partner.search_count([[['is_company', '=', True]]])
+</code></pre>
+<h3 id="read-records">Read records</h3>
+<p>Record data are accessible via the <code>read()</code> method, which takes a list of ids (as
+returned by <code>search()</code>), and optionally a list of fields to fetch. By default, it
+fetches all the fields the current user can read, which tends to be a huge amount.</p>
+<pre><code class="language-python">ids = partner.search([[['is_company', '=', True]]], {'limit': 1})
+[record] = partner.read([ids])
+# count the number of fields fetched by default
+len(record)
+</code></pre>
+<h3 id="list-record-fields">List record fields</h3>
+<p><code>fields_get()</code> can be used to inspect a model’s fields and check which ones seem to be
+of interest.</p>
+<pre><code class="language-python">partner.fields_get([], {'attributes': ['string', 'help', 'type']})
+</code></pre>
+<h3 id="search-and-read">Search and read</h3>
+<p>Because it is a very common task, Odoo provides a <code>search_read()</code> shortcut which, as
+its name suggests, is equivalent to a <code>search()</code> followed by a <code>read()</code>, but avoids
+having to perform two requests and keep ids around.</p>
+<pre><code class="language-python">partner.search_read(
+    [[['is_company', '=', True]]],
+    {'fields': ['name', 'country_id', 'comment'], 'limit': 5},
+)
+</code></pre>
+<h3 id="create-records">Create records</h3>
+<p>Records of a model are created using <code>create()</code>. The method creates a single record and
+returns its database identifier.</p>
+<pre><code class="language-python">id = partner.create([{'name': &quot;New Partner&quot;}])
+</code></pre>
+<h3 id="update-records">Update records</h3>
+<p>Records can be updated using <code>write()</code>. It takes a list of records to update and a
+mapping of updated fields to values similar to <code>create()</code>.</p>
+<pre><code class="language-python">partner.write([[id], {'name': &quot;Newer partner&quot;}])
+</code></pre>
+<h3 id="delete-records">Delete records</h3>
+<p>Records can be deleted in bulk by providing their ids to <code>unlink()</code>.</p>
+<pre><code class="language-python">partner.unlink([[id]])
+</code></pre>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">&#34;&#34;&#34; A wrapper for Odoo&#39;s xml-rpc api, provides a simple wrapper class to access common
+operations.
+
+You can check out the official documentation
+[here](https://www.odoo.com/documentation/master/developer/api/external_api.html).
+
+`odoo_api_wrapper.api.Api` is the main class, `odoo_api_wrapper.api.Operations` defines
+the operations used for `odoo_api_wrapper.api.Api.call`, raises
+`odoo_api_wrapper.api.APIError`.
+
+
+## Installation
+
+```
+pip install odoo-api-wrapper
+```
+
+## Usage Examples
+
+### Instantiate an `Api`
+Create an instance of the API to start using it.
+```python
+import odoo_api_wrapper
+
+api = odoo_api_wrapper.Api(&#34;http://localhost:8069&#34;, &#34;db&#34;, &#34;1001&#34;, &#34;password&#34;)
+```
+
+### Define your model
+```python
+partner = odoo_api_wrapper.Model(api, &#34;res.partner&#34;)
+```
+
+### List records
+Records can be listed and filtered via `search()`.
+```python
+partner.search([[[&#39;is_company&#39;, &#39;=&#39;, True]]])
+```
+
+### Count records
+Rather than retrieve a possibly gigantic list of records and count them,
+`search_count()` can be used to retrieve only the number of records matching the query.
+It takes the same domain filter as `search()` and no other parameter.
+```python
+partner.search_count([[[&#39;is_company&#39;, &#39;=&#39;, True]]])
+```
+
+### Read records
+Record data are accessible via the `read()` method, which takes a list of ids (as
+returned by `search()`), and optionally a list of fields to fetch. By default, it
+fetches all the fields the current user can read, which tends to be a huge amount.
+```python
+ids = partner.search([[[&#39;is_company&#39;, &#39;=&#39;, True]]], {&#39;limit&#39;: 1})
+[record] = partner.read([ids])
+# count the number of fields fetched by default
+len(record)
+```
+
+### List record fields
+`fields_get()` can be used to inspect a model’s fields and check which ones seem to be
+of interest.
+```python
+partner.fields_get([], {&#39;attributes&#39;: [&#39;string&#39;, &#39;help&#39;, &#39;type&#39;]})
+```
+
+### Search and read
+Because it is a very common task, Odoo provides a `search_read()` shortcut which, as
+its name suggests, is equivalent to a `search()` followed by a `read()`, but avoids
+having to perform two requests and keep ids around.
+```python
+partner.search_read(
+    [[[&#39;is_company&#39;, &#39;=&#39;, True]]],
+    {&#39;fields&#39;: [&#39;name&#39;, &#39;country_id&#39;, &#39;comment&#39;], &#39;limit&#39;: 5},
+)
+```
+
+### Create records
+Records of a model are created using `create()`. The method creates a single record and
+returns its database identifier.
+```python
+id = partner.create([{&#39;name&#39;: &#34;New Partner&#34;}])
+```
+
+### Update records
+Records can be updated using `write()`. It takes a list of records to update and a
+mapping of updated fields to values similar to `create()`.
+```python
+partner.write([[id], {&#39;name&#39;: &#34;Newer partner&#34;}])
+```
+
+### Delete records
+Records can be deleted in bulk by providing their ids to `unlink()`.
+```python
+partner.unlink([[id]])
+```
+&#34;&#34;&#34;
+from odoo_api_wrapper.api import Api  # noqa:F401
+from odoo_api_wrapper.api import APIError  # noqa:F401
+from odoo_api_wrapper.api import Operations  # noqa:F401
+from odoo_api_wrapper.model import Model  # noqa:F401
+
+__version__ = &#34;0.2.3&#34;</code></pre>
+</details>
+</section>
+<section>
+<h2 class="section-title" id="header-submodules">Sub-modules</h2>
+<dl>
+<dt><code class="name"><a title="odoo_api_wrapper.api" href="api.html">odoo_api_wrapper.api</a></code></dt>
+<dd>
+<div class="desc"><p>Odoo API wrapper …</p></div>
+</dd>
+<dt><code class="name"><a title="odoo_api_wrapper.model" href="model.html">odoo_api_wrapper.model</a></code></dt>
+<dd>
+<div class="desc"><p>Odoo model class …</p></div>
+</dd>
+</dl>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+</section>
+</article>
+<nav id="sidebar">
+<h1>Index</h1>
+<div class="toc">
+<ul>
+<li><a href="#installation">Installation</a></li>
+<li><a href="#usage-examples">Usage Examples</a><ul>
+<li><a href="#instantiate-an-api">Instantiate an Api</a></li>
+<li><a href="#define-your-model">Define your model</a></li>
+<li><a href="#list-records">List records</a></li>
+<li><a href="#count-records">Count records</a></li>
+<li><a href="#read-records">Read records</a></li>
+<li><a href="#list-record-fields">List record fields</a></li>
+<li><a href="#search-and-read">Search and read</a></li>
+<li><a href="#create-records">Create records</a></li>
+<li><a href="#update-records">Update records</a></li>
+<li><a href="#delete-records">Delete records</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<ul id="index">
+<li><h3><a href="#header-submodules">Sub-modules</a></h3>
+<ul>
+<li><code><a title="odoo_api_wrapper.api" href="api.html">odoo_api_wrapper.api</a></code></li>
+<li><code><a title="odoo_api_wrapper.model" href="model.html">odoo_api_wrapper.model</a></code></li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc" title="pdoc: Python API documentation generator"><cite>pdoc</cite> 0.10.0</a>.</p>
+</footer>
+</body>
+</html>
