@@ -1,6 +1,7 @@
 """ model_name tests """
 # pylint:disable=redefined-outer-name
 import pytest
+
 import odoo_api_wrapper
 
 

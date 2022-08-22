@@ -1,10 +1,11 @@
 """ `odoo_api_wrapper.api.Api` tests """
 # pylint:disable=too-many-arguments
 import socket
-from unittest import mock
 import xmlrpc.client
+from unittest import mock
 
 import pytest
+
 import odoo_api_wrapper
 
 

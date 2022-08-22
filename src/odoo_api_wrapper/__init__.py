@@ -93,7 +93,9 @@ Records can be deleted in bulk by providing their ids to `unlink()`.
 partner.unlink([[id]])
 ```
 """
-from odoo_api_wrapper.api import Api, APIError, Operations
-from odoo_api_wrapper.model import Model
+from odoo_api_wrapper.api import Api  # noqa:F401
+from odoo_api_wrapper.api import APIError  # noqa:F401
+from odoo_api_wrapper.api import Operations  # noqa:F401
+from odoo_api_wrapper.model import Model  # noqa:F401
 
 __version__ = "0.2.3"

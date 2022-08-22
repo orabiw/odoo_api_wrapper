@@ -80,7 +80,10 @@ partner.unlink([[id]])
 
 """
 import functools
-from typing import Any, Callable, Dict, List
+from typing import Any
+from typing import Callable
+from typing import Dict
+from typing import List
 
 import odoo_api_wrapper
 
