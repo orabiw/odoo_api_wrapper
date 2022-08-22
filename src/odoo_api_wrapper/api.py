@@ -87,11 +87,8 @@ api.unlink('res.partner', [[id]])
 import enum
 import functools
 import socket
+import typing as t
 import xmlrpc.client
-from typing import Any
-from typing import Callable
-from typing import Dict
-from typing import List
 
 
 class Operations(enum.Enum):
@@ -110,7 +107,7 @@ class Operations(enum.Enum):
 class APIError(Exception):
     """API Error Base Class"""
 
-    def __init__(self, description: str, *args: Any, **kwargs: Any):
+    def __init__(self, description: str, *args: t.Any, **kwargs: t.Any):
         super().__init__(*args, **kwargs)
         self.description = description
 
@@ -122,14 +119,14 @@ class Api:  # pylint:disable=too-few-public-methods
     """API Wrapper"""
 
     # define the methods we'll add dynamically
-    write: Callable[[str, List, Dict[str, Any]], Any]
-    create: Callable[[str, List, Dict[str, Any]], Any]
-    read: Callable[[str, List, Dict[str, Any]], Any]
-    search: Callable[[str, List, Dict[str, Any]], Any]
-    search_count: Callable[[str, List, Dict[str, Any]], Any]
-    search_read: Callable[[str, List, Dict[str, Any]], Any]
-    fields_get: Callable[[str, List, Dict[str, Any]], Any]
-    unlink: Callable[[str, List, Dict[str, Any]], Any]
+    write: t.Callable[[str, t.List, t.Dict[str, t.Any]], t.Any]
+    create: t.Callable[[str, t.List, t.Dict[str, t.Any]], t.Any]
+    read: t.Callable[[str, t.List, t.Dict[str, t.Any]], t.Any]
+    search: t.Callable[[str, t.List, t.Dict[str, t.Any]], t.Any]
+    search_count: t.Callable[[str, t.List, t.Dict[str, t.Any]], t.Any]
+    search_read: t.Callable[[str, t.List, t.Dict[str, t.Any]], t.Any]
+    fields_get: t.Callable[[str, t.List, t.Dict[str, t.Any]], t.Any]
+    unlink: t.Callable[[str, t.List, t.Dict[str, t.Any]], t.Any]
 
     def __new__(cls, *args, **kwargs):  # pylint:disable=unused-argument
         instance = super().__new__(cls)
@@ -156,9 +153,9 @@ class Api:  # pylint:disable=too-few-public-methods
         self,
         operation: Operations,
         model: str,
-        args: List,
-        kwargs: Dict[str, Any] = None,
-    ) -> Any:
+        args: t.List,
+        kwargs: t.Dict[str, t.Any] = None,
+    ) -> t.Any:
         """Call the api with a model and an operation
 
         Args:

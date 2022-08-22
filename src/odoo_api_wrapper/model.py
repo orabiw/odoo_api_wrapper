@@ -80,10 +80,7 @@ partner.unlink([[id]])
 
 """
 import functools
-from typing import Any
-from typing import Callable
-from typing import Dict
-from typing import List
+import typing as t
 
 import odoo_api_wrapper
 
@@ -92,14 +89,14 @@ class Model:  # pylint:disable=too-few-public-methods
     """Odoo model"""
 
     # define the methods we'll add dynamically
-    write: Callable[[List, Dict[str, Any]], Any]
-    create: Callable[[List, Dict[str, Any]], Any]
-    read: Callable[[List, Dict[str, Any]], Any]
-    search: Callable[[List, Dict[str, Any]], Any]
-    search_count: Callable[[List, Dict[str, Any]], Any]
-    search_read: Callable[[List, Dict[str, Any]], Any]
-    fields_get: Callable[[List, Dict[str, Any]], Any]
-    unlink: Callable[[List, Dict[str, Any]], Any]
+    write: t.Callable[[t.List, t.Dict[str, t.Any]], t.Any]
+    create: t.Callable[[t.List, t.Dict[str, t.Any]], t.Any]
+    read: t.Callable[[t.List, t.Dict[str, t.Any]], t.Any]
+    search: t.Callable[[t.List, t.Dict[str, t.Any]], t.Any]
+    search_count: t.Callable[[t.List, t.Dict[str, t.Any]], t.Any]
+    search_read: t.Callable[[t.List, t.Dict[str, t.Any]], t.Any]
+    fields_get: t.Callable[[t.List, t.Dict[str, t.Any]], t.Any]
+    unlink: t.Callable[[t.List, t.Dict[str, t.Any]], t.Any]
 
     def __new__(  # pylint:disable=unused-argument
         cls,
