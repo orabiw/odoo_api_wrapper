@@ -1,7 +1,0 @@
-[run]
-branch = True
-command_line = -m pytest -x
-source = src/odoo_api_wrapper/
-
-[report]
-show_missing = True
